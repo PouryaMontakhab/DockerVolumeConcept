@@ -47,7 +47,6 @@ namespace DockerVolumeConceptProject.Controllers
             using (FileStream fs = System.IO.File.Create(tempPath))
             {
                 byte[] content = new UTF8Encoding(true).GetBytes($"{body}");
-
                 fs.Write(content, 0, content.Length);
             }
 
@@ -62,7 +61,21 @@ namespace DockerVolumeConceptProject.Controllers
             System.IO.File.Move(tempPath, storagePath);
             return RedirectToAction("Index");
         }
-        public bool IsExistFile(string path)
+        [Route("storage/{name}")]
+        public IActionResult Storage(string name)
+        {
+            if (Directory.Exists($"{_env.ContentRootPath}\\Storage\\"))
+            {
+                var filePath= $"{_env.ContentRootPath}\\Storage\\{name}.txt";
+                if (IsExistFile(filePath))
+                    return Content(System.IO.File.ReadAllText(filePath));
+                return Content("Not Found");
+            }
+            return Content("Not found");
+        }
+
+
+        private bool IsExistFile(string path)
             => System.IO.File.Exists(path);
 
     }
